@@ -1,0 +1,70 @@
+@FileStorageApi_HostAddress = http://localhost:5279
+
+### List all logical files
+GET {{FileStorageApi_HostAddress}}/api/files
+Accept: application/json
+
+###
+
+### Upload a file as "report" — first upload becomes version 1.
+# .http multipart syntax: the boundary must match the Content-Type header exactly, each
+# part starts with "--<boundary>", and the final boundary line ends with "--".
+# The filename= value is the source file's path *relative to this .http file*.
+POST {{FileStorageApi_HostAddress}}/api/files/report
+Content-Type: multipart/form-data; boundary=FileStorageBoundary
+
+--FileStorageBoundary
+Content-Disposition: form-data; name="file"; filename="sample.txt"
+Content-Type: text/plain
+
+< ./sample-files/sample.txt
+--FileStorageBoundary
+Content-Disposition: form-data; name="uploadedBy"
+
+demo-user
+--FileStorageBoundary--
+
+###
+
+### Upload again with the SAME name "report" -> creates version 2 instead of overwriting.
+POST {{FileStorageApi_HostAddress}}/api/files/report
+Content-Type: multipart/form-data; boundary=FileStorageBoundary
+
+--FileStorageBoundary
+Content-Disposition: form-data; name="file"; filename="sample-v2.txt"
+Content-Type: text/plain
+
+< ./sample-files/sample-v2.txt
+--FileStorageBoundary
+Content-Disposition: form-data; name="uploadedBy"
+
+demo-user
+--FileStorageBoundary--
+
+###
+
+### List version history for "report" (newest first)
+GET {{FileStorageApi_HostAddress}}/api/files/report/versions
+Accept: application/json
+
+###
+
+### Download the latest version of "report"
+GET {{FileStorageApi_HostAddress}}/api/files/report
+Accept: */*
+
+###
+
+### Download version 1 of "report" specifically
+GET {{FileStorageApi_HostAddress}}/api/files/report/versions/1
+Accept: */*
+
+###
+
+### Delete a single version (version 1) of "report"
+DELETE {{FileStorageApi_HostAddress}}/api/files/report/versions/1
+
+###
+
+### Delete "report" entirely, including all remaining versions
+DELETE {{FileStorageApi_HostAddress}}/api/files/report
