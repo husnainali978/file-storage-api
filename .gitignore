@@ -1,0 +1,27 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+out/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# SQLite database files (metadata store — regenerated via EF Core migrations)
+*.db
+*.db-shm
+*.db-wal
+
+# Local file storage data (the actual uploaded file bytes)
+storage-data/
+src/FileStorageApi/storage-data/
+
+# Logs
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
